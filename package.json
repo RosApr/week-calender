@@ -1,0 +1,27 @@
+{
+  "name": "pkg-vue",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "file": [
+    "dist"
+  ],
+  "main": "./dist/week-calender.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "vue": "^3.2.47"
+  },
+  "devDependencies": {
+    "@types/node": "^20.1.0",
+    "@vitejs/plugin-legacy": "^4.0.3",
+    "@vitejs/plugin-vue": "^4.2.1",
+    "sass": "^1.62.1",
+    "vite": "3"
+  }
+}
