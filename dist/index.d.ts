@@ -1,5 +1,3 @@
-declare const _default: {
-    install(app: any): void;
-};
-export default _default;
-export * from "./weekCalender";
+import WeekCalender from "./weekCalender.vue";
+import WeekCalenderGrid from "./weekCalenderGrid.vue";
+export { WeekCalenderGrid, WeekCalender };

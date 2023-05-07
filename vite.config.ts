@@ -23,7 +23,7 @@ export default defineConfig({
     },
     build: {
         lib: {
-            entry: resolve(__dirname, 'main.js'),
+            entry: resolve(__dirname, 'src/index.ts'),
             name: 'WeekCalender',
             fileName: 'week-calender',
             formats: ['es', 'umd']
@@ -36,5 +36,7 @@ export default defineConfig({
                 },
             },
         },
+        cssMinify: true,
+        cssCodeSplit: true,
     }
 })

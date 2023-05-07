@@ -1,7 +1,7 @@
 {
-  "name": "pkg-vue",
-  "version": "1.0.0",
-  "description": "",
+  "name": "week-calender",
+  "version": "1.0.2",
+  "description": "week-calender by vue3",
   "type": "module",
   "files": [
     "dist"
@@ -9,31 +9,41 @@
   "main": "./dist/week-calender.umd.cjs",
   "module": "./dist/week-calender.js",
   "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/week-calender.js",
-      "require": "./dist/week-calender.umd.cjs"
-    }
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "vite",
     "build": "vite build"
   },
-  "author": "",
+  "author": "rosapr",
   "license": "ISC",
   "dependencies": {
     "vue": "^3.2.47"
   },
   "devDependencies": {
     "@types/node": "^20.1.0",
-    "@vitejs/plugin-legacy": "^4.0.3",
     "@vitejs/plugin-vue": "^4.2.1",
     "rollup": "^3.21.5",
     "rollup-plugin-typescript2": "^0.34.1",
     "sass": "^1.62.1",
     "terser": "^5.17.1",
     "typescript": "^5.0.4",
-    "vite": "4"
-  }
+    "vite": "4.3.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RosApr/week-calender.git"
+  },
+  "keywords": [
+    "vue3",
+    "vue",
+    "web",
+    "week",
+    "calender",
+    "vue-component",
+    "front-end"
+  ],
+  "bugs": {
+    "url": "https://github.com/RosApr/week-calender/issues"
+  },
+  "homepage": "https://github.com/RosApr/week-calender#readme"
 }

@@ -27,11 +27,11 @@
                 </div>
                 <div class="time-grid-container" @mouseleave="handleMouseup()">
                     <template v-if="disabled">
-                        <weekCalenderGrid v-for="(_, index) in Array.from({ length: 7 * 24 * 2 })" :id="index"
+                        <WeekCalenderGrid v-for="(_, index) in Array.from({ length: 7 * 24 * 2 })" :id="index"
                             :key="index" :selected="currentSelected" />
                     </template>
                     <template v-else>
-                        <weekCalenderGrid v-for="(_, index) in Array.from({ length: 7 * 24 * 2 })" :id="index"
+                        <WeekCalenderGrid v-for="(_, index) in Array.from({ length: 7 * 24 * 2 })" :id="index"
                             :key="index" :selected="currentSelected" @mouse-over="handleMouseover"
                             @mouse-out="handleMouseout" @mouse-down="handleMousedown" @mouse-up="handleMouseup" />
                     </template>
@@ -87,7 +87,7 @@ import {
     defaultValueBitMap,
     defaultValue,
 } from './helper'
-import weekCalenderGrid from './weekCalenderGrid.vue'
+import WeekCalenderGrid from './weekCalenderGrid.vue'
 
 export default defineComponent({
     name: "WeekCalender",
@@ -103,7 +103,7 @@ export default defineComponent({
     },
     emits: ['update:value', 'change'],
     components: {
-        weekCalenderGrid
+        WeekCalenderGrid
     },
     setup(props, { emit }) {
         const disabled = computed(() => props.disabled ?? false)
