@@ -1,39 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
-<link rel="stylesheet" href="./dist/style.css">
+  </head>
+  <link rel="stylesheet" href="./dist/style.css" />
 
-<body>
+  <body>
     <div id="app">
-        <week-calender v-model:value="data" @change="handleUpdate"></week-calender>
+      <week-calender
+        v-model:value="data"
+        @change="handleUpdate"
+      ></week-calender>
     </div>
-</body>
-<script type="module">
-    import { createApp, ref } from 'vue';
-    // import WeekCalenderPlugin, { WeekCalender } from './src/components';
-    import { WeekCalenderPlugin } from './dist/week-calender.js';
+  </body>
+  <script type="module">
+    import { createApp, ref } from 'vue'
+    import { WeekCalender, WeekCalenderGrid } from './src'
     const app = createApp({
-        // components: {
-        //     WeekCalender
-        // },
-        setup() {
-            const data = ref('')
-            return {
-                data: data,
-                handleUpdate: function handleUpdate(data) {
-                    console.log(data)
-                }
-            }
+      components: {
+        WeekCalender,
+        WeekCalenderGrid,
+      },
+      setup() {
+        const data = ref('')
+        return {
+          data: data,
+          handleUpdate: function handleUpdate(data) {
+            console.log(data)
+          },
         }
-    })
-        .use(WeekCalenderPlugin)
-        .mount('#app')
-</script>
-
+      },
+    }).mount('#app')
+  </script>
 </html>

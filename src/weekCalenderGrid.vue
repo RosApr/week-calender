@@ -35,8 +35,8 @@ export default defineComponent({
         function handleMouseover(e: MouseEvent, id: number) {
             const dom = (e.target as unknown as HTMLElement).getBoundingClientRect()
             const position = {
-                left: dom.left - 75 + 6 + 'px', // 6 is half of time grid width & 75 is half of width of tooltip
-                top: dom.top - window.screenTop - 35 - 5 + 'px', // 35 is time grid height  8 is arrow height
+                left: dom.left - 160 / 2 + 6 + 'px', // 6 is half of time grid width & 80 is half of width of tooltip
+                top: dom.top - window.screenTop - 35 + 'px', // 35 is time grid height  14 is arrow height
             }
             emit('mouseOver', id, position)
         }

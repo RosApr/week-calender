@@ -45,9 +45,9 @@
             </div>
         </div>
         <div class="tip-container">
-            <div class="row middle between">
+            <div class="row center between">
                 <div class="col">
-                    <div class="row middle">
+                    <div class="row center" style="gap:4px;">
                         <div class="col">已选择时间段:</div>
                         <div class="col">
                             <span class="demo-time-grid active" />
@@ -60,17 +60,17 @@
                     </div>
                 </div>
                 <div class="col">
-                    <a type="link" @click="handleReset()">
+                    <button @click="handleReset()">
                         清除全部
-                    </a>
+                    </button>
                 </div>
             </div>
-            <!-- <ui.Row v-for="week in Week" :key="week" align="middle" justify="start">
-          <ui.Col>{{ week }}</ui.Col>
-          <ui.Col v-if="selectedLabels.has(week)">
-            <ui.Tag v-for="item in selectedLabels.get(week)" :key="item">{{ item }}</ui.Tag>
-          </ui.Col>
-        </ui.Row>  -->
+            <!-- <div class="row center between" v-for="week in Week" :key="week">
+                <div class="col">{{ week }}</div>
+                <div class="col" v-if="selectedLabels.has(week)">
+                    <span v-for="item in selectedLabels.get(week)" :key="item">{{ item }}</span>
+                </div>
+            </div> -->
         </div>
     </div>
 </template>
@@ -128,6 +128,18 @@ export default defineComponent({
             } else {
                 return [...selected.value.filter((item) => !selectedTmp.value.includes(item))]
             }
+        })
+        const selectedLabels = computed(() => {
+            const map = new Map()
+            Week.forEach(item => {
+                map.set(item, [])
+            })
+            if (props.value) {
+
+            }
+
+            return map
+
         })
         const showTooltip = ref({
             left: '0px',
@@ -214,7 +226,8 @@ export default defineComponent({
             Time,
             Week,
             getFullWeekAndTime,
-            handleReset
+            handleReset,
+            selectedLabels
         }
     }
 })
@@ -230,8 +243,8 @@ export default defineComponent({
     .row {
         display: flex;
 
-        &.middle {
-            align-items: middle;
+        &.center {
+            align-items: center;
         }
 
         &.between {
@@ -286,8 +299,6 @@ export default defineComponent({
                 line-height: 16px;
                 font-size: 13px;
                 color: #333;
-
-                // text-align: center;
             }
         }
 
@@ -340,6 +351,8 @@ export default defineComponent({
                 padding: 2px 4px;
                 box-shadow: 2px 2px 2px 0 #ccc;
                 background-color: #fff !important;
+                font-size: 14px;
+                width: 160px;
 
                 .label {
                     position: relative;
@@ -348,7 +361,6 @@ export default defineComponent({
 
                 .arrow {
                     $width: 10px;
-
                     position: absolute;
                     bottom: calc($width / -2);
                     left: 50%;
@@ -379,6 +391,13 @@ export default defineComponent({
 }
 
 .tip-container {
+    margin-top: 4px;
+    font-size: 14px;
+
+    button {
+        font-size: 14px;
+    }
+
     .demo-time-grid {
         background-color: #f0f1f2;
         vertical-align: text-top;
