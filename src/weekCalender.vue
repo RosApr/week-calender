@@ -3,7 +3,7 @@
         <div class="time-calender">
             <div class="header-info">
                 <div class="text-center info-grid week-label">
-                    星期\时间
+                    星期/时间
                 </div>
                 <div class="info-grid-container" style="width: 100%; background: #f2f4f5;">
                     <div class="text-center info-grid time-info">
@@ -35,9 +35,9 @@
                             :key="index" :selected="currentSelected" @mouse-over="handleMouseover"
                             @mouse-out="handleMouseout" @mouse-down="handleMousedown" @mouse-up="handleMouseup" />
                     </template>
-                    <div class="tooltip" :style="{ display: showTooltip.show ? 'block' : 'none' }">
+                    <div class="tooltip" :style="{ display: tooltip.show ? 'block' : 'none' }">
                         <div class="label">
-                            {{ getFullWeekAndTime(showTooltip.id) }}
+                            {{ getFullWeekAndTime(tooltip.id) }}
                         </div>
                         <div class="arrow" />
                     </div>
@@ -65,18 +65,27 @@
                     </button>
                 </div>
             </div>
-            <!-- <div class="row center between" v-for="week in Week" :key="week">
-                <div class="col">{{ week }}</div>
-                <div class="col" v-if="selectedLabels.has(week)">
-                    <span v-for="item in selectedLabels.get(week)" :key="item">{{ item }}</span>
+            <template v-if="$props.showFormat">
+                <div class="row center between" v-for="week in formattedMap.entries()" :key="week[0]">
+                    <div class="col">{{ week[0] }}</div>
+                    <div class="col" v-show="(week[1].list.length > 0)">
+                        <span style="margin-right:4px;" v-for="item in week[1].list" :key="item">{{ item }}</span>
+                    </div>
                 </div>
-            </div> -->
+            </template>
         </div>
     </div>
 </template>
 <script lang="ts">
-import { computed, ref, defineComponent } from 'vue';
-import type { TValue } from './helper'
+export default {
+    name: 'WeekCalender',
+    inheritAttrs: false,
+    customOptions: {}
+}
+</script>
+<script lang="ts" setup>
+import { computed, ref, watch, onUnmounted } from 'vue';
+import type { GridId } from './helper'
 import {
     Week,
     Time,
@@ -86,151 +95,173 @@ import {
     singleRowColCount,
     defaultValueBitMap,
     defaultValue,
+    getPeriodTime,
 } from './helper'
 import WeekCalenderGrid from './weekCalenderGrid.vue'
 
-export default defineComponent({
-    name: "WeekCalender",
-    props: {
-        value: {
-            type: String,
-            default: ''
-        },
-        disabled: {
-            type: Boolean,
-            default: false
+const props = withDefaults(defineProps<{
+    value: string,
+    disabled?: boolean
+    showFormat?: boolean
+}>(), {
+    value: '',
+    disabled: false,
+    showFormat: true
+})
+const emits = defineEmits<{
+    (e: 'change', data: string): void
+    (e: 'update:value', data: string): void
+}>()
+const disabled = computed(() => props.disabled ?? false)
+const selected = computed(() => {
+    const selected_: number[] = []
+    const ar = props.value || ''
+    ar.split('').forEach((val, index) => {
+        if (val === '1') {
+            selected_.push(index)
         }
-    },
-    emits: ['update:value', 'change'],
-    components: {
-        WeekCalenderGrid
-    },
-    setup(props, { emit }) {
-        const disabled = computed(() => props.disabled ?? false)
-        const selected = computed(() => {
-            const selected_: number[] = []
-            const ar = props.value || ''
-            ar.split('').forEach((val, index) => {
-                if (val === '1') {
-                    selected_.push(index)
-                }
-            })
-            return selected_
-        })
-        const isMouseDown = ref(false)
-        const selectedTmp = ref<TValue[]>([])
-        const isAdd = ref(false)
-        const startPos = ref(defaultPos)
-        const endPos = ref(defaultPos)
-        const currentSelected = computed(() => {
-            if (isAdd.value) {
-                return [...selected.value, ...selectedTmp.value]
-            } else {
-                return [...selected.value.filter((item) => !selectedTmp.value.includes(item))]
-            }
-        })
-        const selectedLabels = computed(() => {
-            const map = new Map()
-            Week.forEach(item => {
-                map.set(item, [])
-            })
-            if (props.value) {
-
-            }
-
-            return map
-
-        })
-        const showTooltip = ref({
-            left: '0px',
-            top: '0px',
-            show: false,
-            id: 0,
-        })
-        const isClickEvent = ref(false)
-        function handleMousedown(id: TValue) {
-            isClickEvent.value = true
-            isMouseDown.value = true
-            showTooltip.value.show = false
-            isAdd.value = !selected.value.includes(id)
-            startPos.value = getTimeGridPos(id)
-        }
-        function handleMouseup(id?: TValue) {
-            isMouseDown.value = false
-            let val = ''
-            if (isClickEvent.value && typeof id === 'number') {
-                const index = selected.value.indexOf(id)
-                let result = [...selected.value]
-                if (index < 0) {
-                    result.push(id)
-                } else {
-                    result = result.filter((sid) => sid !== id)
-                }
-                val = getSelectedStr(result)
-            } else {
-                val = getSelectedStr(currentSelected.value)
-                selectedTmp.value = []
-                endPos.value = defaultPos
-                startPos.value = defaultPos
-            }
-            if (val !== props.value) {
-                emit('update:value', val)
-                emit('change', val)
-            }
-        }
-        function handleMouseout() {
-            showTooltip.value.show = false
-        }
-        function handleMouseover(id: TValue, tooltip: { left: string; top: string }) {
-            isClickEvent.value = false
-            showTooltip.value = {
-                ...tooltip,
-                show: !isMouseDown.value,
-                id,
-            }
-            if (!isMouseDown.value || endPos.value === id) { return }
-            endPos.value = getTimeGridPos(id)
-            const colGap = Math.abs(startPos.value.col! - endPos.value.col!) + 1
-            let result: TValue[] = []
-            let minRow = Math.min(startPos.value.row!, endPos.value.row!)
-            const minCol = Math.min(startPos.value.col!, endPos.value.col!)
-            const maxRow = Math.max(startPos.value.row!, endPos.value.row!)
-            while (minRow <= maxRow) {
-                const singleRowResult = Array.from({ length: colGap }).map(
-                    (_, index) => minRow * singleRowColCount + minCol + index,
-                )
-                result = [...result, ...singleRowResult]
-                minRow++
-            }
-            selectedTmp.value = result
-        }
-        function handleReset() {
-            emit('update:value', defaultValue)
-            emit('change', defaultValue)
-        }
-        function getSelectedStr(data: TValue[]) {
-            const bitmap = Array(...defaultValueBitMap)
-            data.forEach((id) => {
-                bitmap[id] = '1'
-            })
-            return bitmap.join('')
-        }
-        return {
-            disabled,
-            handleMousedown,
-            handleMouseup,
-            handleMouseout,
-            handleMouseover,
-            showTooltip,
-            currentSelected,
-            Time,
-            Week,
-            getFullWeekAndTime,
-            handleReset,
-            selectedLabels
-        }
+    })
+    return selected_
+})
+const isClickEvent = ref(false)
+const isMouseDown = ref(false)
+const selectedTmp = ref<GridId[]>([])
+const isAdd = ref(false)
+const startPos = ref(defaultPos)
+const endPos = ref(defaultPos)
+const tooltip = ref({
+    left: '0px',
+    top: '0px',
+    show: false,
+    id: 0,
+})
+const formatValueWatchHandler = watch(() => props.value, (currentValue, prevValue) => {
+    if (currentValue !== prevValue) {
+        updateFormattedMap()
     }
 })
+onUnmounted(formatValueWatchHandler)
+const currentSelected = computed(() => {
+    if (isAdd.value) {
+        return [...selected.value, ...selectedTmp.value]
+    } else {
+        return [...selected.value.filter((item) => !selectedTmp.value.includes(item))]
+    }
+})
+const formattedMap = ref(initFormattedMap())
+initFormattedMap()
+function initFormattedMap() {
+    const map = new Map<string, { value: string, list: string[] }>()
+    Week.forEach((item) => {
+        map.set(item, {
+            value: '',
+            list: []
+        })
+    })
+    return map
+}
+function updateFormattedMap() {
+    const arr: string[] = []
+    let index = 0
+    while (index <= 6) {
+        arr.push(props.value.slice(index * 48, (index * 48) + 48))
+        index++
+    }
+    for (let index = 0; index < Week.length; index++) {
+        const element = Week[index];
+        const rawData = arr[index]
+        const config = formattedMap.value.get(element)!
+        if (rawData === config.value) continue
+        const res: string[] = []
+        if (rawData) {
+            let start = 0
+            let end = 0
+            while (start < 48 && end <= 48) {
+                if (rawData[end] === '1') {
+                    end++
+                } else {
+                    if (start < end) {
+                        res.push(getPeriodTime(start, end - start))
+                    }
+                    end++
+                    start = end
+                }
+            }
+        }
+        formattedMap.value.set(element, {
+            value: rawData,
+            list: res
+        })
+    }
+}
+function handleMousedown(id: GridId) {
+    isClickEvent.value = true
+    isMouseDown.value = true
+    tooltip.value.show = false
+    isAdd.value = !selected.value.includes(id)
+    startPos.value = getTimeGridPos(id)
+}
+function handleMouseup(id?: GridId) {
+    isMouseDown.value = false
+    let val = ''
+    if (isClickEvent.value && typeof id === 'number') {
+        const index = selected.value.indexOf(id)
+        let result = [...selected.value]
+        if (index < 0) {
+            result.push(id)
+        } else {
+            result = result.filter((sid) => sid !== id)
+        }
+        val = getSelectedStr(result)
+    } else {
+        val = getSelectedStr(currentSelected.value)
+        selectedTmp.value = []
+        endPos.value = defaultPos
+        startPos.value = defaultPos
+    }
+    if (val !== props.value) {
+        emits('update:value', val)
+        emits('change', val)
+    }
+}
+function handleMouseout() {
+    tooltip.value.show = false
+}
+function handleMouseover(id: GridId, config: { left: string; top: string }) {
+    isClickEvent.value = false
+    tooltip.value = {
+        ...config,
+        show: !isMouseDown.value,
+        id,
+    }
+    if (!isMouseDown.value || endPos.value === id) { return }
+    endPos.value = getTimeGridPos(id)
+    const colGap = Math.abs(startPos.value.col! - endPos.value.col!) + 1
+    let result: GridId[] = []
+    let minRow = Math.min(startPos.value.row!, endPos.value.row!)
+    const minCol = Math.min(startPos.value.col!, endPos.value.col!)
+    const maxRow = Math.max(startPos.value.row!, endPos.value.row!)
+    while (minRow <= maxRow) {
+        const singleRowResult = Array.from({ length: colGap }).map(
+            (_, index) => minRow * singleRowColCount + minCol + index,
+        )
+        result = [...result, ...singleRowResult]
+        minRow++
+    }
+    selectedTmp.value = result
+}
+function handleReset() {
+    emits('update:value', defaultValue)
+    emits('change', defaultValue)
+}
+function getSelectedStr(data: GridId[]) {
+    const bitmap = Array(...defaultValueBitMap)
+    data.forEach((id) => {
+        bitmap[id] = '1'
+    })
+    return bitmap.join('')
+}
+
 </script>
 <style lang="scss" scoped>
 .time-calender-container {
@@ -344,8 +375,8 @@ export default defineComponent({
             .tooltip {
                 position: fixed;
                 z-index: 2;
-                left: v-bind("showTooltip.left");
-                top: v-bind("showTooltip.top");
+                left: v-bind("tooltip.left");
+                top: v-bind("tooltip.top");
                 border-radius: 4px;
                 border: 1px solid #ccc;
                 padding: 2px 4px;

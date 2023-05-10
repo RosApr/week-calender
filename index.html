@@ -1,38 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  <link rel="stylesheet" href="./dist/style.css" />
 
-  <body>
-    <div id="app">
-      <week-calender
-        v-model:value="data"
-        @change="handleUpdate"
-      ></week-calender>
-    </div>
-  </body>
-  <script type="module">
-    import { createApp, ref } from 'vue'
-    import { WeekCalender, WeekCalenderGrid } from './src'
-    const app = createApp({
-      components: {
-        WeekCalender,
-        WeekCalenderGrid,
-      },
-      setup() {
-        const data = ref('')
-        return {
-          data: data,
-          handleUpdate: function handleUpdate(data) {
-            console.log(data)
-          },
-        }
-      },
-    }).mount('#app')
-  </script>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+</head>
+<link rel="stylesheet" href="./dist/style.css" />
+
+<body>
+  <div id="app">
+    <week-calender v-model:value="data" @change="handleUpdate" :show-format="false"></week-calender>
+    <week-calender v-model:value="data1" @change="handleUpdate"></week-calender>
+  </div>
+</body>
+<script type="module">
+  import { createApp, ref } from 'vue'
+  import { WeekCalender, WeekCalenderGrid } from './src'
+  const app = createApp({
+    components: {
+      WeekCalender,
+      WeekCalenderGrid,
+    },
+    setup() {
+      const data = ref('')
+      const data1 = ref('')
+      return {
+        data: data,
+        data1,
+        handleUpdate: function handleUpdate(data) {
+          console.log(data)
+        },
+      }
+    },
+  }).mount('#app')
+</script>
+
 </html>

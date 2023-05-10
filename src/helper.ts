@@ -7,7 +7,11 @@ export const Week = [
   '星期六',
   '星期日',
 ]
-export type TValue = number
+export type GridId = number
+export enum GRID_VALUE {
+  selected = '0',
+  unselected = '1'
+}
 export const Time = Array.from({ length: 24 }).map((_, i) => i)
 export const singleRowColCount = 48
 export const defaultValue = '0'.repeat(singleRowColCount * 7)
@@ -46,12 +50,10 @@ export function getTimeGridPos(id: number) {
   }
 }
 export function getPeriodTime(id: number, periodLength: number) {
-  const startTime = `${hourToStr(Math.floor(id / 2))} : ${
-    id % 2 === 0 ? '00' : '30'
-  }`
-  const endTime = `${hourToStr(Math.floor((id + periodLength) / 2))} : ${
-    (id + periodLength) % 2 === 0 ? '00' : '30'
-  }`
+  const startTime = `${hourToStr(Math.floor(id / 2))} : ${id % 2 === 0 ? '00' : '30'
+    }`
+  const endTime = `${hourToStr(Math.floor((id + periodLength) / 2))} : ${(id + periodLength) % 2 === 0 ? '00' : '30'
+    }`
   return `${startTime} ~ ${endTime}`
 }
 export interface Pos {
@@ -61,4 +63,9 @@ export interface Pos {
 export const defaultPos: Pos = {
   row: undefined,
   col: undefined,
+}
+
+
+const defaultConfig = {
+
 }
